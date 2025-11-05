@@ -1,31 +1,48 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "functions.h"
+#include <stack>
+
 using namespace std;
 
-void stackGame() {
-    vector<int> s;
-    string op;
+class BaseballGame {
+private:
+    stack<int> scores;
 
-    cout << "Введите операции (число, +, D, C). Для выхода введите 'q':\n";
-
-    while (true) {
-        cin >> op;
-        if (op == "q" || op == "Q") break;
-
-        if (op == "C" && !s.empty()) s.pop_back();
-        else if (op == "D" && !s.empty()) s.push_back(s.back() * 2);
-        else if (op == "+" && s.size() >= 2)
-            s.push_back(s[s.size() - 1] + s[s.size() - 2]);
-        else if ((isdigit(op[0])) || (op[0] == '-' && op.size() > 1))
-            s.push_back(stoi(op));
-        else
-            cout << "Неверная операция: " << op << endl;
+public:
+    void addScore(int score) {
+        scores.push(score);
     }
 
-    int sum = 0;
-    for (int v : s) sum += v;
+    void doubleScore() {
+        if (!scores.empty()) {
+            scores.push(scores.top() * 2);
+        }
+    }
 
-    cout << "Сумма очков: " << sum << endl;
-}
+    void sumLastTwoScores() {
+        if (scores.size() >= 2) {
+            int top1 = scores.top();
+            scores.pop();
+            int top2 = scores.top();
+            scores.push(top1);
+            scores.push(top1 + top2);
+        }
+    }
+
+    void cancelLastScore() {
+        if (!scores.empty()) {
+            scores.pop();
+        }
+    }
+
+    int getTotalScore() const {
+        int total = 0;
+        stack<int> temp = scores;
+        while (!temp.empty()) {
+            total += temp.top();
+            temp.pop();
+        }
+        return total;
+    }
+};
